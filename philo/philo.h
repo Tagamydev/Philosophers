@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 15:21:36 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/25 21:48:36 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/26 18:33:37 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef PHILO_H
@@ -23,6 +23,7 @@
 #define EAT "is eating"
 #define DEAD "died"
 
+/*
 typedef struct s_philo{
 	pthread_mutex_t	*id;
 	pthread_mutex_t	*printer;
@@ -40,5 +41,6 @@ typedef struct s_env{
 	long long		time_to_sleep;
 	t_philo			*philo;
 }				t_env;
+*/
 
 #endif

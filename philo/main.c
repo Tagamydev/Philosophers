@@ -6,13 +6,17 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 09:21:54 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/25 22:57:08 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/26 18:33:40 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
 
 
 #if 1
+
+#endif
+
+#if 0
 //comer significa bloquear 2 tenedores y hacer un sleep de x tiempo
 //dormir significa hacer un sleep de x tiempo
 //pensar es cualquier tiempo en el que las dos acciones anteriores no se esten realizando
@@ -43,46 +47,51 @@ int	ft_print_messaje(t_philo *philo, int x, char *menssage)
 	long long		time;
 
 	pthread_mutex_lock(philo->printer);
-	time = ft_get_time_mili();
-	printf("%lld %d %s\n", time, x, menssage);
+	if (philo->alive)
+	{
+		time = ft_get_time_mili();
+		printf("%lld %d %s\n", time, x, menssage);
+	}
 	pthread_mutex_unlock(philo->printer);
 	return (0);
+	x = 0;
+	menssage = NULL;
 }
 
-void	ft_unlock_next_fork(t_philo *philo, int philo_number)
+void	ft_unlock_next_fork(t_env *env, unsigned int philo_number)
 {
-	int	i;
+	unsigned int	i;
 
 	i = 0;
-	if (philo_number == philo->total_philo)
+	if (philo_number == env->total_philo)
 		i = 0;
 	else
 		i = philo_number + 1;
-	pthread_mutex_unlock(&philo->forks[i]);
+	pthread_mutex_unlock(&env->forks[i]);
 }
 
-void	ft_unlock_next_fork(t_philo *philo, int philo_number)
+void	ft_unlock_fork(t_env *env, unsigned int philo_number)
 {
-	pthread_mutex_unlock(&philo->forks[i]);
+	pthread_mutex_unlock(&env->forks[philo_number]);
 }
 
-void	ft_lock_next_fork(t_philo *philo, int philo_number)
+void	ft_lock_next_fork(t_env *env, unsigned int philo_number)
 {
-	int	i;
+	unsigned int	i;
 
 	i = 0;
-	if (philo_number == philo->total_philo)
+	if (philo_number == env->total_philo)
 		i = 0;
 	else
 		i = philo_number + 1;
-	pthread_mutex_lock(&philo->forks[i]);
-	ft_print_messaje(philo, philo_number, FORK);
+	pthread_mutex_lock(&env->forks[i]);
+	ft_print_messaje(env->philo, philo_number, FORK);
 }
 
-void	ft_lock_fork(t_philo *philo, int philo_number)
+void	ft_lock_fork(t_env *env, int philo_number)
 {
-	pthread_mutex_lock(&philo->forks[philo_number]);
-	ft_print_messaje(philo, philo_number, FORK);
+	pthread_mutex_lock(&env->forks[philo_number]);
+	ft_print_messaje(env->philo, philo_number, FORK);
 }
 
 void	ft_put_last_meal(t_philo *philo, int philo_number)
@@ -93,23 +102,46 @@ void	ft_put_last_meal(t_philo *philo, int philo_number)
 	philo->last_meals[philo_number] = time;
 }
 
+
+void	ft_check_death(t_env *env, unsigned int i)
+{
+	long long	time;
+
+	time = ft_get_time_mili();
+	pthread_mutex_lock(env->philo->printer);
+	if (env->philo->last_meals[i] != -1 && env->philo->last_meals[i] + \
+	env->time_to_die < time && env->philo->alive)
+	{
+		env->philo->alive = 0;
+		printf("%lld %d %s\n", time, i, DEAD);
+		printf("%lld:actual time\n%lld:last meal\n%lld:next save meal\n", time, env->philo->last_meals[i], env->philo->last_meals[i] + env->time_to_die - 1);
+	}
+	pthread_mutex_unlock(env->philo->printer);
+}
+
 void	*inspection(void *ptr)
 {
 	t_philo	*philo;
 	t_env	*env;
-	int		i;
+	unsigned int		i;
 
 	env = (t_env *)ptr;
 	philo = env->philo;
 	i = 0;
-	while (1)
+	while (philo->alive)
 	{
-		pthread_mutex_lock(philo->id[i]);
-		pthread_mutex_unlock(philo->id[i]);
-		if (i + 1 == env->total_philo)
-			i = 0;
-		else
+		i = 0;
+		while (i != env->total_philo)
+		{
+			pthread_mutex_lock(&philo->id[i]);
+			ft_check_death(env, i);
+			pthread_mutex_unlock(&philo->id[i]);
+			usleep(300);
 			++i;
+		}
+		if (!philo->alive)
+			break ;
+		usleep((env->time_to_die / 2) * 1000);
 	}
 	return (NULL);
 }
@@ -134,38 +166,39 @@ void	*routine(void *ptr)
 	ft_put_last_meal(philo, philo_number);
 	while (philo->alive)
 	{
-		ft_lock_fork(philo, philo_number);
-		ft_lock_next_fork(philo, philo_number);
-		pthread_mutex_lock(philo->id[philo_number]);
-		pthread_mutex_unlock(philo->id[philo_number]);
+		ft_lock_fork(env, philo_number);
+		ft_lock_next_fork(env, philo_number);
 		ft_print_messaje(philo, philo_number, EAT);
-		usleep(philo->time_to_eat * 1000);
+		usleep(env->time_to_eat * 1000);
+		ft_unlock_fork(env, philo_number);
+		ft_unlock_next_fork(env, philo_number);
+		pthread_mutex_lock(&philo->id[philo_number]);
 		ft_put_last_meal(philo, philo_number);
-		ft_unlock_fork(philo, philo_number);
-		ft_unlock_next_fork(philo, philo_number);
-		ft_unlock_next_fork(philo, philo_number);
-		usleep(philo->time_to_sleep * 1000);
+		pthread_mutex_unlock(&philo->id[philo_number]);
+		ft_print_messaje(philo, philo_number, SLEEP);
+		usleep(env->time_to_sleep * 1000);
+		ft_print_messaje(philo, philo_number, THINK);
 	}
 	return (NULL);
 }
 
-int	start_sim(t_philo *env)
+int	start_sim(t_env *env)
 {
 	pthread_t		philos[env->total_philo];
 	pthread_t		caronte;
 	unsigned int	i;
 
 	i = 0;
-	if(pthread_create(caronte, NULL, &inspection, (void *)env))
+	if(pthread_create(&caronte, NULL, &inspection, (void *)env))
 			return (1);
-	while (i != x)
+	while (i != env->total_philo)
 	{
-		if(pthread_create(philos  + i, NULL, &routine, (void *)philo))
+		if(pthread_create(philos  + i, NULL, &routine, (void *)env))
 			return (1);
 		++i;
 	}
 	i = 0;
-	while (i != x)
+	while (i != env->total_philo)
 	{
 		if(pthread_join(philos[i], NULL))
 			return (1);
@@ -211,7 +244,19 @@ void	*ft_free_philo(t_philo *philo)
 	return (NULL);
 }
 
-t_philo	*ft_init_philo(void)
+void	ft_fill_meals(long long *meals, unsigned int total)
+{
+	unsigned int	i;
+
+	i = 0;
+	while (i != total)
+	{
+		meals[i] = -1;
+		++i;
+	}
+}
+
+t_philo	*ft_init_philo(unsigned int total_philo)
 {
 	t_philo			*philo;
 
@@ -230,9 +275,10 @@ t_philo	*ft_init_philo(void)
 	if (!philo->printer)
 		return ((t_philo *)ft_free_philo(philo));
 	pthread_mutex_init(philo->printer, NULL);
-	philo->last_meals = malloc(philo->total_philo * sizeof(long long));
+	philo->last_meals = malloc(total_philo * sizeof(long long));
 	if (!philo->last_meals)
 		return ((t_philo *)ft_free_philo(philo));
+	ft_fill_meals(philo->last_meals, total_philo);
 	return (philo);
 }
 
@@ -252,30 +298,31 @@ t_env	*ft_init_env(void)
 	env = malloc(sizeof(t_env));
 	if (!env)
 		return (NULL);
+	env->total_philo = 200;
+	env->time_to_die = 410;
+	env->time_to_sleep = 200;
+	env->time_to_eat = 200;
 	env->forks = NULL;
-	philo = ft_init_philo();
+	philo = ft_init_philo(env->total_philo);
 	if (!philo)
 		return ((t_env *)ft_free((void **)&env));
 	env->philo = philo;
 	if (ft_fill_arrays(env))
 		return ((t_env *)ft_free_env(env));
-	philo->total_philo = 200;
 	philo->counter = 0;
 	philo->alive = 1;
-	env->time_to_die = 300;
-	env->time_to_sleep = 200;
-	env->time_to_eat = 200;
-	return (philo);
+	return (env);
 }
 
 int	main(void)
 {
 	t_env *env;
 
+
 	env = ft_init_env();
-	if (!philo)
+	if (!env)
 		return (-1);
-	start_sim(philo->total_philo, philo);
+	start_sim(env);
 	return (0);
 }
 
