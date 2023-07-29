@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 09:21:54 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/28 21:09:34 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/28 21:45:57 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
@@ -42,6 +42,34 @@ void ft_so_sad(t_env *env)
 	usleep(env->time_to_die * 1000);
 	printf("%u 1 died\n", time + env->time_to_die);
 	ft_free_env(env);
+}
+
+int	start_sim(t_env *env)
+{
+	pthread_t		philos[env->total_philo];
+	pthread_t		mom;
+	unsigned int	i;
+
+	if (env->number_of_meals > 0)
+	{
+		if(pthread_create(&mom, NULL, &ft_mom, (void *)env))
+			return (1);
+	}
+	i = 0;
+	while (i != env->total_philo)
+	{
+		if(pthread_create(philos  + i, NULL, &routine, (void *)env))
+			return (1);
+		++i;
+	}
+	i = 0;
+	while (i != env->total_philo)
+	{
+		if(pthread_join(philos[i], NULL))
+			return (1);
+		++i;
+	}
+	return (0);
 }
 
 int	main(int argc, char **argv)

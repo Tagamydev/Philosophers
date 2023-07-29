@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 15:21:36 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/28 20:57:46 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/28 22:02:04 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef PHILO_H
@@ -42,6 +42,14 @@ typedef struct s_env{
 	unsigned int	number_of_meals;
 	t_philo			*philo;
 }				t_env;
+
+//			FORKS
+void			ft_unlock_next_fork(t_env *env, unsigned int philo_number);
+void			ft_unlock_fork(t_env *env, unsigned int philo_number);
+void			ft_lock_next_fork(t_env *env, unsigned int philo_number);
+void			ft_lock_fork(t_env *env, unsigned int philo_number);
+void			ft_lock_forks(t_env *env, unsigned int philo_number);
+void			ft_unlock_forks(t_env *env, unsigned int philo_number);
 
 void			*ft_free(void **str);
 int				ft_fill_arrays(t_env *env);
