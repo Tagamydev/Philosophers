@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 09:21:54 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/30 20:19:50 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/30 21:35:31 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
@@ -41,13 +41,22 @@ void ft_so_sad(t_env *env)
 	ft_free_env(env);
 }
 
-void	*ft_mom(void *ptr)
+void	*mom_check(void *ptr)
 {
+	ptr = NULL;
+	printf("momy is in home\n");
+	return (NULL);
+}
+
+void	*routine(void *ptr)
+{
+	t_philo	*philo;
+
+	philo = (t_philo *)ptr;
 	return (NULL);
 	ptr = NULL;
 }
 
-/*
 int	start_sim(t_env *env, int x)
 {
 	pthread_t		mom;
@@ -55,21 +64,21 @@ int	start_sim(t_env *env, int x)
 
 	if (x)
 	{
-		if(pthread_create(&mom, NULL, &ft_mom, (void *)env))
+		if(pthread_create(&mom, NULL, &mom_check, (void *)env))
 			return (1);
 	}
-	env->start_time = ft_get_time_mili();
+	env->starting_time = ft_get_time_mili();
 	i = 0;
 	while (i != env->total_philo)
 	{
-		if(pthread_create(philos  + i, NULL, &routine, (void *)env))
+		if(pthread_create(env->agora + i, NULL, &routine, (void *)&env->philos[i]))
 			return (1);
 		++i;
 	}
 	i = 0;
 	while (i != env->total_philo)
 	{
-		if(pthread_join(philos[i], NULL))
+		if(pthread_join(env->agora[i], NULL))
 			return (1);
 		++i;
 	}
@@ -77,7 +86,6 @@ int	start_sim(t_env *env, int x)
 	if (mom)
 		return (0);
 }
-*/
 
 int	main(int argc, char **argv)
 {
@@ -97,12 +105,10 @@ int	main(int argc, char **argv)
 		return(-1);
 	if (env->total_philo == 1)
 		ft_so_sad(env);
-	/*
 	if (argc == 6)
 		start_sim(env, 1);
 	else
 		start_sim(env, 0);
-		*/
 	return (0);
 	argc = 0;
 	argv = NULL;

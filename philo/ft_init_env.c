@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:14:04 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/30 20:17:36 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/30 21:01:00 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
@@ -22,12 +22,13 @@ int	ft_init_philos_env(t_env *env)
 	philos = malloc(sizeof(t_philo) * total);
 	if (!philos)
 		return (0);
-	while (i != total)
+	while (i < total)
 	{
 		if (!ft_fill_new_philo(philos + i, env, i))
 			return (0);
 		i++;
 	}
+	env->philos = philos;
 	return (1);
 }
 

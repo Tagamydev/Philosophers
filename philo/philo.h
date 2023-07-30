@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 15:21:36 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/30 20:16:02 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/30 21:37:50 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef PHILO_H
@@ -60,7 +60,7 @@ typedef struct s_philo{
 unsigned int	ft_get_time_mili(void);
 void			*ft_free(void **str);
 unsigned int	ft_atou(const char *nptr);
-void			ft_free_philos(t_philo *philos, unsigned int total);
+void			ft_free_philos(void *ptr);
 void			*ft_free_env(t_env *env);
 void			ft_parse_env(t_env *env, int meals, char **numbers);
 int				ft_init_mutex_env(t_env *env);
