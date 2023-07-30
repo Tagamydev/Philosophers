@@ -6,11 +6,70 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/28 20:14:04 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/28 20:57:48 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/30 20:17:36 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
 
+int	ft_init_philos_env(t_env *env)
+{
+	t_philo			*philos;
+	unsigned int	total;
+	unsigned int	i;
+
+	total = env->total_philo;
+	i = 0;
+	philos = malloc(sizeof(t_philo) * total);
+	if (!philos)
+		return (0);
+	while (i != total)
+	{
+		if (!ft_fill_new_philo(philos + i, env, i))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int	ft_init_forks_env(t_env *env)
+{
+	unsigned int	total;
+	unsigned int	i;
+	pthread_mutex_t	*forks;
+
+	total = env->total_philo;
+	i = 0;
+	forks = malloc(sizeof(pthread_mutex_t) * total);
+	if (!forks)
+		return (0);
+	while (i != total)
+	{
+		if (pthread_mutex_init(forks + i++, NULL))
+			return (0);
+	}
+	env->forks = forks;
+	return (1);
+}
+
+t_env	*ft_init_env(char **numbers, int meals)
+{
+	t_env			*env;
+
+	env = NULL;
+	env = malloc(sizeof(t_env));
+	if (!env)
+		return (NULL);
+	ft_parse_env(env, meals, numbers);
+	if (!ft_init_mutex_env(env))
+		return ((t_env *)ft_free_env(env));
+	if (!ft_init_forks_env(env))
+		return ((t_env *)ft_free_env(env));
+	if (!ft_init_philos_env(env))
+		return ((t_env *)ft_free_env(env));
+	return (env);
+}
+
+#if 0
 int	ft_fill_arrays(t_env *env)
 {
 	pthread_mutex_t *forks;
@@ -120,8 +179,8 @@ void	ft_parse_env(t_env *env, int meals, char **numbers)
 {	
 	env->total_philo = ft_atoi(numbers[0]);
 	env->time_to_die = ft_atoi(numbers[1]);
-	env->time_to_sleep = ft_atoi(numbers[2]);
-	env->time_to_eat = ft_atoi(numbers[3]);
+	env->time_to_sleep = ft_atoi(numbers[3]);
+	env->time_to_eat = ft_atoi(numbers[2]);
 	if (meals)
 		env->number_of_meals = ft_atoi(numbers[4]);
 	numbers = NULL;
@@ -147,5 +206,8 @@ t_env	*ft_init_env(char **numbers, int meals)
 	philo->alive = 1;
 	return (env);
 }
+
+#endif
+
 
 

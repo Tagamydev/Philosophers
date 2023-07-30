@@ -6,7 +6,7 @@
 #    By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/24 19:28:25 by samusanc          #+#    #+#              #
-#    Updated: 2023/07/28 20:14:52 by samusanc         ###   ########.fr        #
+#    Updated: 2023/07/30 19:46:21 by samusanc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,9 @@ THR		= gcc -Wall -Wextra -Werror -pthread -fsanitize=thread -I ./
 LEAK	= gcc -Wall -Wextra -Werror -pthread -fsanitize=address -I ./
 MAIN	= ./main.c
 SRCS	= $(MAIN) \
-		  ft_init_env.c
+		  ./ft_init_env.c \
+		  ./ft_init_env_utils.c \
+		  ./ft_free_env.c \
 
 O_DIR	= ./objects/
 OBJS	= $(addprefix $(O_DIR)/, $(SRCS:.c=.o))

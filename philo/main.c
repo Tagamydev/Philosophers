@@ -6,12 +6,110 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 09:21:54 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/28 21:45:57 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/30 20:19:50 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
 
 #if 1
+
+unsigned int	ft_get_time_mili(void)
+{
+	unsigned int		time;
+	struct timeval		tv;
+
+	gettimeofday(&tv, NULL);
+	time = tv.tv_sec * 1000LL + tv.tv_usec / 1000;
+	return (time);
+}
+
+void	*ft_free(void **str)
+{
+	if (*str)
+	{
+		free(*str);
+		*str = NULL;
+	}
+	return (NULL);
+}
+
+void ft_so_sad(t_env *env)
+{
+	printf("%u 1 has taken a fork\n", 0);
+	usleep(env->time_to_die * 1000);
+	printf("%u 1 died\n", env->time_to_die);
+	ft_free_env(env);
+}
+
+void	*ft_mom(void *ptr)
+{
+	return (NULL);
+	ptr = NULL;
+}
+
+/*
+int	start_sim(t_env *env, int x)
+{
+	pthread_t		mom;
+	unsigned int	i;
+
+	if (x)
+	{
+		if(pthread_create(&mom, NULL, &ft_mom, (void *)env))
+			return (1);
+	}
+	env->start_time = ft_get_time_mili();
+	i = 0;
+	while (i != env->total_philo)
+	{
+		if(pthread_create(philos  + i, NULL, &routine, (void *)env))
+			return (1);
+		++i;
+	}
+	i = 0;
+	while (i != env->total_philo)
+	{
+		if(pthread_join(philos[i], NULL))
+			return (1);
+		++i;
+	}
+	return (0);
+	if (mom)
+		return (0);
+}
+*/
+
+int	main(int argc, char **argv)
+{
+	t_env *env;
+
+	if (argc < 5 || argc > 6)
+	{
+		write(2, "usage:./philo (nb of philo) (time to die) "\
+		"(time to eat) (time to sleep) (opcional: max number of meals)\n", 104);
+		return (-1);
+	}
+	if (argc == 6)
+		env = ft_init_env(argv + 1, 1);
+	else
+		env = ft_init_env(argv + 1, 0);
+	if (!env)
+		return(-1);
+	if (env->total_philo == 1)
+		ft_so_sad(env);
+	/*
+	if (argc == 6)
+		start_sim(env, 1);
+	else
+		start_sim(env, 0);
+		*/
+	return (0);
+	argc = 0;
+	argv = NULL;
+}
+
+#endif
+#if 0
 
 unsigned int	ft_get_time_mili(void)
 {
@@ -44,17 +142,79 @@ void ft_so_sad(t_env *env)
 	ft_free_env(env);
 }
 
+void	*hunt(void *ptr)
+{
+	t_sheriff		*rango;
+	unsigned int	time;
+	t_env			*env;
+	unsigned int	death_date;
+	unsigned int	philo_number;
+	
+	rango = (t_sheriff *)ptr;
+	env = rango->env;
+	philo_number = rango->philo_number;
+	while (env->philo->alive)
+	{
+		pthread_mutex_lock(&env->philo->id[philo_number]);
+		time = ft_get_time_mili();
+		death_date = env->philo->last_meals[philo_number] + env->time_to_die;
+		if (time >= death_date &&  death_date != env->time_to_die && env->philo->alive)
+		{
+			pthread_mutex_lock(env->philo->printer);
+			env->philo->alive = 0;
+			printf("%u %d %s\n", time - env->start_time, philo_number, DEAD);
+			pthread_mutex_unlock(env->philo->printer);
+		}
+		pthread_mutex_unlock(&env->philo->id[philo_number]);
+	}
+	return (NULL);
+}
+
+void	*routine(void *ptr)
+{
+
+	t_philo	*philo;
+	t_env	*env;
+	pthread_t		hunter;
+	t_sheriff		rango;
+	int		philo_number;
+	int		i;
+
+	env = (t_env *)ptr;
+	philo = env->philo;
+	i = 0;
+	pthread_mutex_lock(philo->counter_incrementer);
+	philo_number = philo->counter++;
+	pthread_mutex_unlock(philo->counter_incrementer);
+	if ((philo_number % 2))
+		usleep(100);
+	rango.philo_number = philo_number;
+	rango.env = env;
+	if(pthread_create(&hunter, NULL, &hunt, (void *)&rango))
+			return (NULL);
+	while (philo->alive)
+	{
+		if (ft_eat(env, philo_number))
+			return (NULL);
+		ft_print_room(env, philo_number, THINK);
+	}
+	return (NULL);
+}
+
 int	start_sim(t_env *env)
 {
 	pthread_t		philos[env->total_philo];
 	pthread_t		mom;
 	unsigned int	i;
 
+	/*
 	if (env->number_of_meals > 0)
 	{
 		if(pthread_create(&mom, NULL, &ft_mom, (void *)env))
 			return (1);
 	}
+	*/
+	env->start_time = ft_get_time_mili();
 	i = 0;
 	while (i != env->total_philo)
 	{
@@ -70,6 +230,8 @@ int	start_sim(t_env *env)
 		++i;
 	}
 	return (0);
+	if (mom)
+		return (0);
 }
 
 int	main(int argc, char **argv)
@@ -92,7 +254,8 @@ int	main(int argc, char **argv)
 		return(-1);
 	if (env->total_philo == 1)
 		ft_so_sad(env);
-	
+	if (start_sim(env))
+		return (-1);
 	return (0);
 	argc = 0;
 	argv = NULL;
