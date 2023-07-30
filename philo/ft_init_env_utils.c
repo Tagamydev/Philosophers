@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/30 19:43:24 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/30 21:53:03 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/30 22:14:33 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
@@ -40,6 +40,8 @@ void	ft_parse_env(t_env *env, int meals, char **numbers)
 	if (meals)
 		env->number_of_meals = ft_atou(numbers[4]);
 	env->starting_time = 0;
+	env->alive = true;
+	env->fat = false;
 }
 
 int	ft_init_mutex_env(t_env *env)
@@ -71,6 +73,9 @@ int	ft_fill_new_philo(t_philo *philo, t_env *env, unsigned int i)
 	if (!philo->block_philo)
 		return (0);
 	if (pthread_mutex_init(philo->block_philo, NULL))
+		return (0);
+	philo->shinigami = malloc(sizeof(pthread_t));
+	if (!philo->shinigami)
 		return (0);
 	philo->own_fork = env->forks + i;
 	if (i <= env->total_philo - 1)

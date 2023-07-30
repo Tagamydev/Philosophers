@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 15:21:36 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/30 21:53:01 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/30 22:13:59 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef PHILO_H
@@ -38,6 +38,8 @@ typedef struct s_env{
 	unsigned int	time_to_sleep;
 	unsigned int	number_of_meals;
 	unsigned int	starting_time;
+	t_bool			alive;
+	t_bool			fat;
 	pthread_mutex_t	*printer;
 	pthread_mutex_t	*speed_force;
 	pthread_mutex_t	*forks;
@@ -45,7 +47,7 @@ typedef struct s_env{
 }				t_env;
 
 typedef struct s_philo{
-	pthread_t		*wife;
+	pthread_t		*shinigami;
 	unsigned int	philo_number;
 	unsigned int	number_of_meals;
 	t_bool			hungry;

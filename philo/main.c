@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 09:21:54 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/30 21:52:57 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/30 22:36:41 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
@@ -49,11 +49,73 @@ void	*mom_check(void *ptr)
 	return (NULL);
 }
 
+int	ft_print_room(t_philo *philo, char *menssage)
+{
+	unsigned int		time;
+
+	pthread_mutex_lock(philo->env->printer);
+	time = ft_get_time_mili() - philo->env->starting_time;
+	if (*menssage == 'd' && philo->env->alive == true)
+	{
+		printf("%u %d %s\n", time, philo->philo_number, menssage);
+		philo->env->alive = false;
+	}
+	else if (philo->env->alive == true)
+		printf("%u %d %s\n", time, philo->philo_number, menssage);
+	pthread_mutex_unlock(philo->env->printer);
+	return (1);
+}
+
+void	*ft_death_note(void *ptr)
+{
+	t_philo	*philo;
+	
+	philo = (t_philo *)ptr;
+	while (philo->env->alive == true)
+	{
+		pthread_mutex_lock(philo->block_philo);
+		if (philo->eating == false &&ft_get_time_mili() >= philo->time_to_die)
+			ft_print_room(philo, DEAD);
+		if (philo->number_of_meals == philo->env->number_of_meals)
+		{
+			pthread_mutex_lock(philo->env->speed_force);
+			philo->number_of_meals += 1;
+			philo->env->fat = true;
+			pthread_mutex_lock(philo->env->speed_force);
+		}
+		pthread_mutex_unlock(philo->block_philo);
+	}
+	return (NULL);
+}
+
 void	*routine(void *ptr)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)ptr;
+	//philo->time_to_die = philo->env->time_to_die + ft_get_time_mili();
+	//if (pthread_create(philo->shinigami, NULL, &ft_death_note, (void *)philo))
+	//	return (NULL);
+	while (philo->env->alive == true)
+	{
+		pthread_mutex_lock(philo->own_fork);
+		ft_print_room(philo, FORK);
+		pthread_mutex_lock(philo->other_fork);
+		ft_print_room(philo, FORK);
+		pthread_mutex_lock(philo->block_philo);
+		philo->eating = true;
+		philo->time_to_die = philo->env->time_to_die + ft_get_time_mili();
+		ft_print_room(philo, EAT);
+		philo->number_of_meals += 1;
+		usleep((philo->env->time_to_eat) * 1000);
+		philo->eating = false;
+		pthread_mutex_unlock(philo->block_philo);
+		pthread_mutex_unlock(philo->own_fork);
+		pthread_mutex_unlock(philo->other_fork);
+		ft_print_room(philo, SLEEP);
+		usleep((philo->env->time_to_sleep) * 1000);
+		ft_print_room(philo, THINK);
+	}
 	return (NULL);
 	ptr = NULL;
 }
@@ -110,7 +172,7 @@ int	main(int argc, char **argv)
 		start_sim(env, 1);
 	else
 		start_sim(env, 0);
-	ft_free_env(env);
+	//ft_free_env(env);
 	return (0);
 }
 
