@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 09:21:54 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/30 21:35:31 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/30 21:52:57 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
@@ -33,12 +33,13 @@ void	*ft_free(void **str)
 	return (NULL);
 }
 
-void ft_so_sad(t_env *env)
+int ft_so_sad(t_env *env)
 {
 	printf("%u 1 has taken a fork\n", 0);
 	usleep(env->time_to_die * 1000);
 	printf("%u 1 died\n", env->time_to_die);
 	ft_free_env(env);
+	return (0);
 }
 
 void	*mom_check(void *ptr)
@@ -104,14 +105,13 @@ int	main(int argc, char **argv)
 	if (!env)
 		return(-1);
 	if (env->total_philo == 1)
-		ft_so_sad(env);
+		return (ft_so_sad(env));
 	if (argc == 6)
 		start_sim(env, 1);
 	else
 		start_sim(env, 0);
+	ft_free_env(env);
 	return (0);
-	argc = 0;
-	argv = NULL;
 }
 
 #endif

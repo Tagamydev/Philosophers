@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/30 19:42:14 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/30 21:37:48 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/07/30 21:49:53 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
@@ -34,18 +34,16 @@ void	*ft_free_env(t_env *env)
 	ft_free((void **)&env->speed_force);
 	i = 0;
 	while (i != env->total_philo)
-	{
-		pthread_mutex_destroy(env->agora + i);
-
-	}
-	/*
+		pthread_detach(env->agora[i++]);
+	free(env->agora);
 	i = 0;
 	while (i != env->total_philo)
 		pthread_mutex_destroy(env->forks + i++);
-	ft_free((void **)&env->agora);
 	ft_free((void **)&env->forks);
-	//ft_free((void **)&env);
-	*/
-	return (NULL);
 	i = 0;
+	while (i != env->total_philo)
+		pthread_mutex_destroy(env->philos[i++].block_philo);
+	ft_free((void **)&env->philos);
+	ft_free((void **)&env);
+	return (NULL);
 }
