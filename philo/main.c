@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 09:21:54 by samusanc          #+#    #+#             */
-/*   Updated: 2023/10/12 17:59:32 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/10/12 18:28:42 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
@@ -222,9 +222,29 @@ int	is_dead(t_philo *philo)
 	return (i);
 }
 
+int	is_fat(t_philo *philo)
+{
+	unsigned int	i;
+	unsigned int	j;
+
+	i = 0;
+	j = 0;
+	while (i < philo->number_of_philos)
+	{
+		pthread_mutex_lock(philo->m_philo_status + i);
+		if (philo->p_philo_meals[i] >= philo->number_of_meals)
+			j++;
+		pthread_mutex_unlock(philo->m_philo_status + i);
+		i++;
+	}
+	if (j == philo->number_of_philos)
+		return (1);
+	return (0);
+}
+
 void	*ft_death(void *ptr)
 {
-	t_philo	*philo;
+	t_philo			*philo;
 	unsigned int	i;
 	
 	philo = (t_philo *)ptr;
@@ -237,6 +257,7 @@ void	*ft_death(void *ptr)
 			pthread_mutex_lock(philo->m_philo_death + i);
 			if (get_actual_time(philo) > philo->p_philo_death[i])
 			{
+////////////////////////////////////////////////////////////////////////////////
 				pthread_mutex_lock(philo->m_philo_status + i);
 				if (philo->p_philo_status[i] != EATING)
 				{
@@ -249,6 +270,18 @@ void	*ft_death(void *ptr)
 					pthread_mutex_unlock(philo->m_philo_printer);
 				}
 				pthread_mutex_unlock(philo->m_philo_status + i);
+////////////////////////////////////////////////////////////////////////////////
+			}
+			if (philo->limit_meals == yes)
+			{
+////////////////////////////////////////////////////////////////////////////////
+				if (is_fat(philo))
+				{
+					pthread_mutex_lock(philo->m_philo_loop);
+					philo->end = yes;
+					pthread_mutex_unlock(philo->m_philo_loop);
+				}
+////////////////////////////////////////////////////////////////////////////////
 			}
 			pthread_mutex_unlock(philo->m_philo_death + i);
 			i++;
