@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/14 09:21:54 by samusanc          #+#    #+#             */
-/*   Updated: 2023/10/12 18:28:42 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/10/12 18:57:32 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include <philo.h>
@@ -248,7 +248,7 @@ void	*ft_death(void *ptr)
 	unsigned int	i;
 	
 	philo = (t_philo *)ptr;
-	usleep((philo->time_2_die * 1000)/2);
+	usleep((philo->time_2_die * 1000));
 	while (!is_dead(philo))
 	{
 		i = 0;
@@ -340,7 +340,7 @@ void	*routine(void *ptr)
 	philo = (t_philo *)ptr;
 	id = init_routine(philo);
 	if (!(id % 2))
-		usleep(300);
+		usleep(100);
 	while (!is_dead(philo))
 	{
 		eat(philo, id);
