@@ -6,20 +6,18 @@
 #    By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/24 19:28:25 by samusanc          #+#    #+#              #
-#    Updated: 2023/10/12 17:17:13 by samusanc         ###   ########.fr        #
+#    Updated: 2023/09/25 20:57:39 by samusanc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= minishell
-CFLAGS	= -Wall -Wextra -Werror -pthread -I ./ -g3 -fsanitize=thread
+CFLAGS	= -Wall -Wextra -Werror -pthread -I ./
 CC		= gcc $(CFLAGS)
 THR		= gcc -Wall -Wextra -Werror -pthread -fsanitize=thread -I ./
 LEAK	= gcc -Wall -Wextra -Werror -pthread -fsanitize=address -I ./
 MAIN	= ./main.c
 SRCS	= $(MAIN) \
-		  ./u_forks.c \
-		  ./l_forks.c \
-		  ./eat.c \
+		   \
 
 O_DIR	= ./objects/
 OBJS	= $(addprefix $(O_DIR)/, $(SRCS:.c=.o))
@@ -30,11 +28,8 @@ $(O_DIR)/%.o: %.c
 
 all: $(NAME) $(SRCS)
 
-thr: minishell $(SRC)
+thr: aoeu $(SRC)
 	$(THR) ./main.c -o aoeu
-
-leak: minishell $(SRC)
-	$(LEAK) ./main.c -o minishell
 
 $(NAME): $(OBJS)
 	@$(CC) $(OBJS) -o $(NAME)

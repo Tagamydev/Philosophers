@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 15:21:36 by samusanc          #+#    #+#             */
-/*   Updated: 2023/07/30 22:13:59 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/10/12 17:46:58 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef PHILO_H
@@ -17,108 +17,53 @@
 # include <stdio.h>
 # include <unistd.h>
 # include <sys/time.h>
-# define FORK "has taken a fork"
-# define SLEEP "is sleeping"
-# define THINK "is thinking"
-# define EAT "is eating"
-# define DEAD "died"
+# define DEAD 1
+# define THINKING 2
+# define EATING 3
+# define SLEEPING 4
 
 typedef enum e_bool{
-	false = 0,
-	true = 1
-}				t_bool;
-
-struct s_philo;
-
-typedef struct s_env{
-	pthread_t		*agora;
-	unsigned int	total_philo;
-	unsigned int	time_to_die;
-	unsigned int	time_to_eat;
-	unsigned int	time_to_sleep;
-	unsigned int	number_of_meals;
-	unsigned int	starting_time;
-	t_bool			alive;
-	t_bool			fat;
-	pthread_mutex_t	*printer;
-	pthread_mutex_t	*speed_force;
-	pthread_mutex_t	*forks;
-	struct s_philo	*philos;
-}				t_env;
+	no = 0,
+	yes = 1
+}			t_bool;
 
 typedef struct s_philo{
-	pthread_t		*shinigami;
-	unsigned int	philo_number;
+	pthread_mutex_t	*m_philo_status;//status of each philo (MUTEX)
+	//el mutex del status se va a utilizar para actalizar el status y el number of meals
+	pthread_mutex_t	*m_philo_death;//time of death of each philo (MUTEX)
+	pthread_mutex_t	*m_philo_forks;//the forks of each philo (MUTEX)
+	pthread_mutex_t	*m_philo_printer;//the only printer for the entire philo (MUTEX)
+	pthread_mutex_t	*m_philo_loop;//the mutex for the loop (MUTEX)
+	pthread_mutex_t	*m_philo_id;//the only printer for the entire philo (MUTEX)
+	char			*p_philo_status;//status of each philo (VARIABLE)
+	unsigned int	*p_philo_death;//time of death of each philo
+	unsigned int	*p_philo_meals;//number of meals done by each philo
+	unsigned int	number_of_philos;
+	unsigned int	time_2_eat;
+	unsigned int	time_2_sleep;
+	unsigned int	time_2_die;
 	unsigned int	number_of_meals;
-	t_bool			hungry;
-	t_bool			eating;
-	unsigned int	time_to_die;
-	pthread_mutex_t	*block_philo;
-	pthread_mutex_t	*own_fork;
-	pthread_mutex_t	*other_fork;
-	t_env			*env;
+	unsigned int	time_start;
+	unsigned int	id;
+	t_bool			limit_meals;
+	t_bool			end;
 }				t_philo;
 
+void			lock_forks(t_philo *philo, unsigned int id);
+void			unlock_forks(t_philo *philo, unsigned int id);
+unsigned int	ft_atoui(char *nptr);
+void			m_free(size_t len, pthread_mutex_t *mut);
+void			free_all(t_philo *philo);
+void			fill_numbers_philo(t_philo *philo, char **argv, size_t i);
+pthread_mutex_t	*m_alloc_and_init(size_t len);
+int				free_all_save(t_philo *philo);
+int				mutex_save(t_philo *philo);
+int				array_save(t_philo *philo);
+void			init_philo(t_philo *philo);
 unsigned int	ft_get_time_mili(void);
-void			*ft_free(void **str);
-unsigned int	ft_atou(const char *nptr);
-void			ft_free_philos(void *ptr);
-void			*ft_free_env(t_env *env);
-void			ft_parse_env(t_env *env, int meals, char **numbers);
-int				ft_init_mutex_env(t_env *env);
-int				ft_fill_new_philo(t_philo *philo, t_env *env, unsigned int i);
-int				ft_init_philos_env(t_env *env);
-int				ft_init_forks_env(t_env *env);
-t_env			*ft_init_env(char **numbers, int meals);
-
-/*
-typedef struct s_philo{
-	pthread_mutex_t	*id;
-	pthread_mutex_t	*printer;
-	pthread_mutex_t	*counter_incrementer;
-	unsigned int	counter;
-	int				alive;
-	unsigned int		*last_meals;
-	unsigned int	*number_meals;
-}				t_philo;
-
-typedef struct s_env{
-	pthread_mutex_t	*forks;
-	unsigned int	total_philo;
-	unsigned int	time_to_die;
-	unsigned int	time_to_eat;
-	unsigned int	time_to_sleep;
-	unsigned int	number_of_meals;
-	unsigned int	start_time;
-	t_philo			*philo;
-}				t_env;
-
-typedef struct s_sheriff{
-	unsigned int	philo_number;
-	t_env			*env;
-}				t_sheriff;
-
-void			ft_put_last_meal(t_env *env, unsigned int philo_number);
-int				ft_print_room(t_env *env, int x, char *menssage);
-unsigned int	ft_get_time_mili(void);
-//			FORKS
-void			ft_unlock_next_fork(t_env *env, unsigned int philo_number);
-void			ft_unlock_fork(t_env *env, unsigned int philo_number);
-void			ft_lock_next_fork(t_env *env, unsigned int philo_number);
-void			ft_lock_fork(t_env *env, unsigned int philo_number);
-void			ft_lock_forks(t_env *env, unsigned int philo_number);
-void			ft_unlock_forks(t_env *env, unsigned int philo_number);
-int				ft_eat(t_env *env, unsigned int philo_number);
-
-void			*ft_free(void **str);
-int				ft_fill_arrays(t_env *env);
-void			*ft_free_philo(t_philo *philo);
-void			ft_fill_meals(unsigned int *meals, unsigned int total);
-void			*ft_free_env(t_env *env);
-unsigned int	ft_atoi(const char *nptr);
-void			ft_parse_env(t_env *env, int meals, char **numbers);
-t_env			*ft_init_env(char **numbers, int meals);
-int				main(int argc, char **argv);
-*/
+int				philo_parsing(t_philo *philo, char **argv);
+unsigned int	get_actual_time(t_philo *philo);
+int				is_dead(t_philo *philo);
+void			eat(t_philo *philo, unsigned int id);
 
 #endif
