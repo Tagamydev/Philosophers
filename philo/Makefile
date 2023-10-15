@@ -6,12 +6,12 @@
 #    By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/24 19:28:25 by samusanc          #+#    #+#              #
-#    Updated: 2023/10/15 15:59:33 by samusanc         ###   ########.fr        #
+#    Updated: 2023/10/15 17:41:40 by samusanc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= philo
-CFLAGS	= -Wall -Wextra -Werror -pthread -I ./ -g3 -fsanitize=thread
+CFLAGS	= -Wall -Wextra -Werror -pthread -I ./ #-g3 -fsanitize=thread
 CC		= gcc $(CFLAGS)
 THR		= gcc -Wall -Wextra -Werror -pthread -fsanitize=thread -I ./
 LEAK	= gcc -Wall -Wextra -Werror -pthread -fsanitize=address -I ./
