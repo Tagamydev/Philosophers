@@ -1,33 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   alloc_init.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/14 09:21:54 by samusanc          #+#    #+#             */
-/*   Updated: 2023/10/15 15:38:36 by samusanc         ###   ########.fr       */
+/*   Created: 2023/10/15 15:43:45 by samusanc          #+#    #+#             */
+/*   Updated: 2023/10/15 15:43:57 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include <philo.h>
 
-int	main(int argc, char **argv)
+pthread_mutex_t	*m_alloc_and_init(size_t len)
 {
-	t_philo	philo;
+	pthread_mutex_t	*result;
+	size_t			i;
+	size_t			j;
 
-	if (argc != 5 && argc != 6)
+	i = 0;
+	j = 0;
+	result = malloc(sizeof(pthread_mutex_t) * len);
+	if (!result)
+		return (NULL);
+	while (i < len)
 	{
-		printf("Usage: number_of_philosophers time_to_die time_to_eat"\
-		" time_to_sleep [number_of_times_each_philosopher_must_eat]\n");
-		return (0);
+		if (pthread_mutex_init(result + i, NULL))
+		{
+			while (j > i)
+				pthread_mutex_destroy(result + j++);
+			free(result);
+			return (NULL);
+		}
+		i++;
 	}
-	if (argc == 6)
-		philo.limit_meals = yes;
-	else
-		philo.limit_meals = no;
-	if (philo_parsing(&philo, ++argv))
-		return (-1);
-	start_sim(&philo);
-	free_all(&philo);
-	return (0);
+	return (result);
 }

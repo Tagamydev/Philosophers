@@ -6,11 +6,11 @@
 #    By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/24 19:28:25 by samusanc          #+#    #+#              #
-#    Updated: 2023/10/12 17:17:13 by samusanc         ###   ########.fr        #
+#    Updated: 2023/10/15 15:59:33 by samusanc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME	= minishell
+NAME	= philo
 CFLAGS	= -Wall -Wextra -Werror -pthread -I ./ -g3 -fsanitize=thread
 CC		= gcc $(CFLAGS)
 THR		= gcc -Wall -Wextra -Werror -pthread -fsanitize=thread -I ./
@@ -20,6 +20,28 @@ SRCS	= $(MAIN) \
 		  ./u_forks.c \
 		  ./l_forks.c \
 		  ./eat.c \
+		  ./start_sim.c \
+		  ./ft_atoui.c \
+		  ./m_free.c \
+		  ./free_all.c \
+		  ./fill_numbers_philo.c \
+		  ./alloc_init.c \
+		  ./mutex_save.c \
+		  ./array_save.c \
+		  ./init_philo.c \
+		  ./death.c \
+		  ./ft_sleep.c \
+		  ./tmp.c \
+		  ./time.c \
+		  ./routine.c \
+
+O_DIR	= ./objects/
+OBJS	= $(addprefix $(O_DIR)/, $(SRCS:.c=.o))
+
+$(O_DIR)/%.o: %.c
+	@mkdir -p $(@D)
+	@$(CC) -c $< -o $(O_DIR)/$(<:.c=.o)
+
 
 O_DIR	= ./objects/
 OBJS	= $(addprefix $(O_DIR)/, $(SRCS:.c=.o))

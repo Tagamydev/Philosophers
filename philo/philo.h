@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 15:21:36 by samusanc          #+#    #+#             */
-/*   Updated: 2023/10/12 18:28:21 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/10/15 16:00:45 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef PHILO_H
@@ -28,16 +28,15 @@ typedef enum e_bool{
 }			t_bool;
 
 typedef struct s_philo{
-	pthread_mutex_t	*m_philo_status;//status of each philo (MUTEX)
-	//el mutex del status se va a utilizar para actalizar el status y el number of meals
-	pthread_mutex_t	*m_philo_death;//time of death of each philo (MUTEX)
-	pthread_mutex_t	*m_philo_forks;//the forks of each philo (MUTEX)
-	pthread_mutex_t	*m_philo_printer;//the only printer for the entire philo (MUTEX)
-	pthread_mutex_t	*m_philo_loop;//the mutex for the loop (MUTEX)
-	pthread_mutex_t	*m_philo_id;//the only printer for the entire philo (MUTEX)
-	char			*p_philo_status;//status of each philo (VARIABLE)
-	unsigned int	*p_philo_death;//time of death of each philo
-	unsigned int	*p_philo_meals;//number of meals done by each philo
+	pthread_mutex_t	*m_philo_status;
+	pthread_mutex_t	*m_philo_death;
+	pthread_mutex_t	*m_philo_forks;
+	pthread_mutex_t	*m_philo_printer;
+	pthread_mutex_t	*m_philo_loop;
+	pthread_mutex_t	*m_philo_id;
+	char			*p_philo_status;
+	unsigned int	*p_philo_death;
+	unsigned int	*p_philo_meals;
 	unsigned int	number_of_philos;
 	unsigned int	time_2_eat;
 	unsigned int	time_2_sleep;
@@ -65,5 +64,13 @@ int				philo_parsing(t_philo *philo, char **argv);
 unsigned int	get_actual_time(t_philo *philo);
 int				is_dead(t_philo *philo);
 void			eat(t_philo *philo, unsigned int id);
+void			is_philo_fat(t_philo *philo);
+int				is_fat(t_philo *philo);
+void			*ft_death(void *ptr);
+void			ft_sleep(t_philo *philo, unsigned int id);
+void			think(t_philo *philo, unsigned int id);
+int				init_routine(t_philo *philo);
+void			*routine(void *ptr);
+int				start_sim(t_philo *philo);
 
 #endif

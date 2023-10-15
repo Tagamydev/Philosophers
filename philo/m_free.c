@@ -1,26 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   m_free.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/14 09:21:54 by samusanc          #+#    #+#             */
-/*   Updated: 2023/09/25 21:04:47 by samusanc         ###   ########.fr       */
+/*   Created: 2023/10/15 15:41:28 by samusanc          #+#    #+#             */
+/*   Updated: 2023/10/15 15:41:40 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include <philo.h>
 
-int	main(int argc, char **argv)
+void	m_free(size_t len, pthread_mutex_t *mut)
 {
-	if (argc != 5 && argc != 6)
-	{
-		printf("Usage: number_of_philosophers time_to_die time_to_eat"\
-		" time_to_sleep [number_of_times_each_philosopher_must_eat]\n");
-		return (0);
-	}
-	printf("argc:%d\n", argc);
-	return (0);
-	argc = 0;
-	argv = NULL;
+	size_t	i;
+
+	i = 0;
+	if (!mut)
+		return ;
+	while (i < len)
+		pthread_mutex_destroy(mut + i++);
+	free(mut);
 }
