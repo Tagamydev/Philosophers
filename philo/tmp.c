@@ -34,7 +34,7 @@ int	philo_parsing(t_philo *philo, char **argv)
 	return (0);
 }
 
-int	is_dead(t_philo *philo)
+int	is_dead(t_philo *philo, unsigned int id)
 {
 	int	i;
 
@@ -44,6 +44,20 @@ int	is_dead(t_philo *philo)
 		i = 0;
 	else
 		i = 1;
+	if (i)
+	{
+		pthread_mutex_unlock(philo->m_philo_loop);
+		return (i);
+	}
+	else
+	{
+		if (get_actual_time(philo) > philo->p_philo_death[id])
+		{
+			i = 1;
+			printf("%u %u is dead\n", get_actual_time(philo), id + 1);
+			philo->end = yes;
+		}
+	}
 	pthread_mutex_unlock(philo->m_philo_loop);
 	return (i);
 }
@@ -51,10 +65,7 @@ int	is_dead(t_philo *philo)
 void	think(t_philo *philo, unsigned int id)
 {
 	pthread_mutex_lock(philo->m_philo_printer);
-	if (!is_dead(philo))
+	if (!is_dead(philo, id))
 		printf("%u %u is thinking\n", get_actual_time(philo), id + 1);
 	pthread_mutex_unlock(philo->m_philo_printer);
-	pthread_mutex_lock(philo->m_philo_status + id);
-	philo->p_philo_status[id] = THINKING;
-	pthread_mutex_unlock(philo->m_philo_status + id);
 }

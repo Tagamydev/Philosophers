@@ -23,9 +23,6 @@ int	mutex_save(t_philo *philo)
 	philo->m_philo_status = m_alloc_and_init(philo->number_of_philos);
 	if (!philo->m_philo_status)
 		return (free_all_save(philo));
-	philo->m_philo_death = m_alloc_and_init(philo->number_of_philos);
-	if (!philo->m_philo_death)
-		return (free_all_save(philo));
 	philo->m_philo_forks = m_alloc_and_init(philo->number_of_philos);
 	if (!philo->m_philo_forks)
 		return (free_all_save(philo));

@@ -15,10 +15,17 @@
 static void	lock_fork(t_philo *philo, unsigned int id)
 {
 	pthread_mutex_lock(philo->m_philo_forks + id);
-	pthread_mutex_lock(philo->m_philo_printer);
-	if (philo->end == no)
-		printf("%u %u has taken a fork\n", get_actual_time(philo), id + 1);
-	pthread_mutex_unlock(philo->m_philo_printer);
+}
+
+static void	take_forks(t_philo *philo, unsigned int id)
+{
+	unsigned int	actual_time;
+
+	actual_time = get_actual_time(philo);
+	printf("%u %u has taken a fork\n", actual_time, id + 1);
+	printf("%u %u has taken a fork\n", actual_time, id + 1);
+	printf("%u %u is eating\n", actual_time, id + 1);
+	philo->p_philo_death[id] = actual_time + philo->time_2_die;
 }
 
 static void	lock_next_fork(t_philo *philo, unsigned int id)
@@ -31,8 +38,8 @@ static void	lock_next_fork(t_philo *philo, unsigned int id)
 	else
 		pthread_mutex_lock(philo->m_philo_forks + 0);
 	pthread_mutex_lock(philo->m_philo_printer);
-	if (philo->end == no)
-		printf("%u %u has taken a fork\n", get_actual_time(philo), id + 1);
+	if (!is_dead(philo, id))
+		take_forks(philo, id);
 	pthread_mutex_unlock(philo->m_philo_printer);
 }
 

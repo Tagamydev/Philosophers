@@ -16,8 +16,6 @@ void	free_all(t_philo *philo)
 {
 	m_free(philo->number_of_philos, philo->m_philo_status);
 	philo->m_philo_status = NULL;
-	m_free(philo->number_of_philos, philo->m_philo_death);
-	philo->m_philo_death = NULL;
 	m_free(philo->number_of_philos, philo->m_philo_forks);
 	philo->m_philo_forks = NULL;
 	m_free(1, philo->m_philo_printer);

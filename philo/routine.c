@@ -19,12 +19,7 @@ int	init_routine(t_philo *philo)
 	id = 0;
 	pthread_mutex_lock(philo->m_philo_id);
 	id = philo->id++;
-	pthread_mutex_lock(philo->m_philo_death + id);
 	philo->p_philo_death[id] = get_actual_time(philo) + philo->time_2_die;
-	pthread_mutex_unlock(philo->m_philo_death + id);
-	pthread_mutex_lock(philo->m_philo_status + id);
-	philo->p_philo_status[id] = THINKING;
-	pthread_mutex_unlock(philo->m_philo_status + id);
 	pthread_mutex_unlock(philo->m_philo_id);
 	return (id);
 }
@@ -38,8 +33,8 @@ void	*routine(void *ptr)
 	philo = (t_philo *)ptr;
 	id = init_routine(philo);
 	if (!(id % 2))
-		usleep(100);
-	while (!is_dead(philo))
+		usleep(300);
+	while (!is_dead(philo, id))
 	{
 		eat(philo, id);
 		ft_sleep(philo, id);

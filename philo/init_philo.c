@@ -15,7 +15,6 @@
 void	init_philo(t_philo *philo)
 {
 	philo->m_philo_status = NULL;
-	philo->m_philo_death = NULL;
 	philo->m_philo_forks = NULL;
 	philo->m_philo_printer = NULL;
 	philo->p_philo_status = NULL;

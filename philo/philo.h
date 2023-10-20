@@ -29,7 +29,6 @@ typedef enum e_bool{
 
 typedef struct s_philo{
 	pthread_mutex_t	*m_philo_status;
-	pthread_mutex_t	*m_philo_death;
 	pthread_mutex_t	*m_philo_forks;
 	pthread_mutex_t	*m_philo_printer;
 	pthread_mutex_t	*m_philo_loop;
@@ -48,6 +47,7 @@ typedef struct s_philo{
 	t_bool			end;
 }				t_philo;
 
+int				ft_usleep(useconds_t usec);
 void			lock_forks(t_philo *philo, unsigned int id);
 void			unlock_forks(t_philo *philo, unsigned int id);
 unsigned int	ft_atoui(char *nptr);
@@ -62,7 +62,7 @@ void			init_philo(t_philo *philo);
 unsigned int	ft_get_time_mili(void);
 int				philo_parsing(t_philo *philo, char **argv);
 unsigned int	get_actual_time(t_philo *philo);
-int				is_dead(t_philo *philo);
+int				is_dead(t_philo *philo, unsigned int id);
 void			eat(t_philo *philo, unsigned int id);
 void			is_philo_fat(t_philo *philo);
 int				is_fat(t_philo *philo);

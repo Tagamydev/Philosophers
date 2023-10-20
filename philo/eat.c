@@ -15,17 +15,9 @@
 void	eat(t_philo *philo, unsigned int id)
 {
 	lock_forks(philo, id);
-	pthread_mutex_lock(philo->m_philo_printer);
-	if (philo->end == no)
-		printf("%u %u is eating\n", get_actual_time(philo), id + 1);
-	pthread_mutex_unlock(philo->m_philo_printer);
-	pthread_mutex_lock(philo->m_philo_death + id);
-	philo->p_philo_death[id] = get_actual_time(philo) + philo->time_2_die;
-	pthread_mutex_unlock(philo->m_philo_death + id);
 	pthread_mutex_lock(philo->m_philo_status + id);
-	philo->p_philo_status[id] = EATING;
 	philo->p_philo_meals[id] += 1;
 	pthread_mutex_unlock(philo->m_philo_status + id);
-	usleep(philo->time_2_eat * 1000);
+	ft_usleep(philo->time_2_eat);
 	unlock_forks(philo, id);
 }

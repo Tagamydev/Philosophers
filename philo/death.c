@@ -42,20 +42,18 @@ void	is_philo_fat(t_philo *philo)
 	}
 }
 
-void	death_loop(t_philo *philo, unsigned int i)
+int	is_dead_loop(t_philo *philo)
 {
-	pthread_mutex_lock(philo->m_philo_status + i);
-	if (philo->p_philo_status[i] != EATING)
-	{
-		pthread_mutex_lock(philo->m_philo_printer);
-		if (!is_dead(philo))
-			printf("%u %u died\n", get_actual_time(philo), i + 1);
-		pthread_mutex_lock(philo->m_philo_loop);
-		philo->end = yes;
-		pthread_mutex_unlock(philo->m_philo_loop);
-		pthread_mutex_unlock(philo->m_philo_printer);
-	}
-	pthread_mutex_unlock(philo->m_philo_status + i);
+	int	i;
+
+	i = 0;
+	pthread_mutex_lock(philo->m_philo_loop);
+	if (philo->end == no)
+		i = 0;
+	else
+		i = 1;
+	pthread_mutex_unlock(philo->m_philo_loop);
+	return (i);
 }
 
 void	*ft_death(void *ptr)
@@ -65,17 +63,14 @@ void	*ft_death(void *ptr)
 
 	philo = (t_philo *)ptr;
 	usleep((philo->time_2_die * 1000));
-	while (!is_dead(philo))
+	i = 0;
+	while (!is_dead_loop(philo))
 	{
 		i = 0;
 		while (i < philo->number_of_philos)
 		{
-			pthread_mutex_lock(philo->m_philo_death + i);
-			if (get_actual_time(philo) > philo->p_philo_death[i])
-				death_loop(philo, i);
 			if (philo->limit_meals == yes)
 				is_philo_fat(philo);
-			pthread_mutex_unlock(philo->m_philo_death + i);
 			i++;
 		}
 		usleep(philo->time_2_die / 2);
