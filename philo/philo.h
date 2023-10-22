@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/10 15:21:36 by samusanc          #+#    #+#             */
-/*   Updated: 2023/10/20 13:24:00 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/10/22 17:49:00 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #ifndef PHILO_H
@@ -46,6 +46,13 @@ typedef struct s_philo{
 	t_bool			limit_meals;
 	t_bool			end;
 }				t_philo;
+
+typedef struct s_fat{
+	unsigned int	i;
+	unsigned int	j;
+	unsigned int	k;
+	unsigned int	time;
+}				t_fat;
 
 int				ft_usleep(useconds_t usec);
 void			lock_forks(t_philo *philo, unsigned int id);

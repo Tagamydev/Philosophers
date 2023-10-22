@@ -6,7 +6,7 @@
 /*   By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/15 15:54:40 by samusanc          #+#    #+#             */
-/*   Updated: 2023/10/15 16:04:18 by samusanc         ###   ########.fr       */
+/*   Updated: 2023/10/22 17:49:22 by samusanc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	*routine(void *ptr)
 	philo = (t_philo *)ptr;
 	id = init_routine(philo);
 	if (!(id % 2))
-		usleep(1500);
+		usleep(1700);
 	while (!is_dead(philo, id))
 	{
 		eat(philo, id);
