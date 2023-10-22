@@ -16,18 +16,31 @@ int	is_fat(t_philo *philo)
 {
 	unsigned int	i;
 	unsigned int	j;
+	unsigned int	k;
+	unsigned int	time;
 
 	i = 0;
 	j = 0;
+	k = 0;
+	time = get_actual_time(philo);
 	while (i < philo->number_of_philos)
 	{
 		pthread_mutex_lock(philo->m_philo_status + i);
 		if (philo->p_philo_meals[i] >= philo->number_of_meals)
-			j++;
+			j++;	
+		if (time > philo->p_philo_death[i])
+		{
+			k = 1;
+			pthread_mutex_lock(philo->m_philo_loop);
+			if (philo->end == no)
+				printf("%u %u is dead\n", time, i + 1);
+			philo->end = yes;
+			pthread_mutex_unlock(philo->m_philo_loop);
+		}
 		pthread_mutex_unlock(philo->m_philo_status + i);
 		i++;
 	}
-	if (j == philo->number_of_philos)
+	if ((philo->limit_meals == yes && j == philo->number_of_philos) || k)
 		return (1);
 	return (0);
 }
@@ -69,11 +82,10 @@ void	*ft_death(void *ptr)
 		i = 0;
 		while (i < philo->number_of_philos)
 		{
-			if (philo->limit_meals == yes)
-				is_philo_fat(philo);
+			is_philo_fat(philo);
 			i++;
 		}
-		usleep(philo->time_2_die / 2);
+		//usleep(philo->time_2_die / 2);
 	}
 	return (NULL);
 }

@@ -15,9 +15,6 @@
 void	eat(t_philo *philo, unsigned int id)
 {
 	lock_forks(philo, id);
-	pthread_mutex_lock(philo->m_philo_status + id);
-	philo->p_philo_meals[id] += 1;
-	pthread_mutex_unlock(philo->m_philo_status + id);
 	ft_usleep(philo->time_2_eat);
 	unlock_forks(philo, id);
 }

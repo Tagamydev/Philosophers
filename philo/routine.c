@@ -33,7 +33,7 @@ void	*routine(void *ptr)
 	philo = (t_philo *)ptr;
 	id = init_routine(philo);
 	if (!(id % 2))
-		usleep(300);
+		usleep(1500);
 	while (!is_dead(philo, id))
 	{
 		eat(philo, id);

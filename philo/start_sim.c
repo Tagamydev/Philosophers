@@ -22,11 +22,8 @@ static int	start_fatness(t_philo *philo, pthread_t *death, pthread_t *philos)
 {
 	if (!philos)
 		return (start_sim_error(philos));
-	if (philo->limit_meals == yes)
-	{
-		if (pthread_create(death, NULL, &ft_death, (void *)philo))
-			return (start_sim_error(philos));
-	}
+	if (pthread_create(death, NULL, &ft_death, (void *)philo))
+		return (start_sim_error(philos));
 	return (0);
 }
 
@@ -45,8 +42,7 @@ int	start_sim(t_philo *philo)
 		if (pthread_create(philos + i++, NULL, &routine, (void *)philo))
 			return (1);
 	}
-	if (philo->limit_meals == yes)
-		pthread_join(death, NULL);
+	pthread_join(death, NULL);
 	i = 0;
 	while (i < philo->number_of_philos)
 	{
