@@ -6,7 +6,7 @@
 #    By: samusanc <samusanc@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/06/24 19:28:25 by samusanc          #+#    #+#              #
-#    Updated: 2023/10/20 11:45:52 by samusanc         ###   ########.fr        #
+#    Updated: 2023/10/22 17:51:54 by samusanc         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,6 +65,7 @@ re: fclean all
 
 fclean: clean
 	@rm -f $(NAME)
+	@rm -rf ./objects
 
 clean:
 	@rm -f $(OBJS)
